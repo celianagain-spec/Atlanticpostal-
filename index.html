@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtlanticPostal - Worldwide Shipping</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f9;
+}
+header {
+    background: #003366;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+nav {
+    background: #001f3f;
+    padding: 10px;
+    text-align: center;
+}
+nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+}
+section {
+    padding: 40px;
+}
+.btn {
+    background: #003366;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+.card {
+    background: white;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+footer {
+    background: #003366;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+input, select {
+    padding: 8px;
+    margin: 5px 0;
+    width: 100%;
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>AtlanticPostal</h1>
+<p>Reliable Worldwide Shipping Solutions</p>
+</header>
+
+<nav>
+<a href="#services">Services</a>
+<a href="#tracking">Track Package</a>
+<a href="#calculator">Price Calculator</a>
+<a href="#reviews">Reviews</a>
+<a href="#contact">Contact</a>
+</nav>
+
+<section id="services">
+<h2>Our Services</h2>
+<div class="card">🌍 International Shipping</div>
+<div class="card">🚚 Express Delivery (24-72 hours)</div>
+<div class="card">📦 Secure Package Handling</div>
+<div class="card">🐾 Pet Transportation</div>
+</section>
+
+<section id="tracking">
+<h2>Track Your Package</h2>
+<input type="text" id="trackingNumber" placeholder="Enter Tracking Number">
+<button class="btn" onclick="trackPackage()">Track</button>
+<p id="trackingResult"></p>
+</section>
+
+<section id="calculator">
+<h2>Shipping Price Calculator</h2>
+<label>Weight (kg)</label>
+<input type="number" id="weight">
+
+<label>Shipping Type</label>
+<select id="shippingType">
+<option value="standard">Standard</option>
+<option value="express">Express</option>
+</select>
+
+<button class="btn" onclick="calculatePrice()">Calculate</button>
+<p id="priceResult"></p>
+</section>
+
+<section id="reviews">
+<h2>Customer Reviews</h2>
+<div class="card">⭐⭐⭐⭐⭐ - "Fast and reliable delivery worldwide!"</div>
+<div class="card">⭐⭐⭐⭐⭐ - "Excellent customer service and safe shipping."</div>
+<div class="card">⭐⭐⭐⭐ - "My package arrived on time and in perfect condition."</div>
+</section>
+
+<section id="contact">
+<h2>Contact Us</h2>
+<p>Email: support@atlanticpostal.com</p>
+</section>
+
+<footer>
+<p>© 2026 AtlanticPostal. All rights reserved.</p>
+</footer>
+
+<script>
+function trackPackage() {
+    var number = document.getElementById("trackingNumber").value;
+    var result = document.getElementById("trackingResult");
+
+    if(number === "") {
+        result.innerHTML = "Please enter a tracking number.";
+    } else {
+        result.innerHTML = "Tracking Number " + number + " is currently in transit. Estimated delivery: 3-5 business days.";
+    }
+}
+
+function calculatePrice() {
+    var weight = document.getElementById("weight").value;
+    var type = document.getElementById("shippingType").value;
+    var result = document.getElementById("priceResult");
+
+    if(weight === "") {
+        result.innerHTML = "Please enter weight.";
+        return;
+    }
+
+    var price = weight * 5;
+
+    if(type === "express") {
+        price = weight * 8;
+    }
+
+    result.innerHTML = "Estimated Shipping Cost: $" + price;
+}
+</script>
+
+</body>
+</html>
