@@ -118,36 +118,54 @@ input, select {
 </footer>
 
 <script>
-function trackPackage() {
-    var number = document.getElementById("trackingNumber").value;
-    var result = document.getElementById("trackingResult");
+async function trackPackage() {
 
-    if(number === "") {
-        result.innerHTML = "Please enter a tracking number.";
-    } else {
-        result.innerHTML = "Tracking Number " + number + " is currently in transit. Estimated delivery: 3-5 business days.";
-    }
+const trackingNumber = document.getElementById("trackingNumber").value;
+const result = document.getElementById("trackingResult");
+
+if(trackingNumber === ""){
+result.innerHTML = "Bitte geben Sie eine Sendungsnummer ein.";
+return;
 }
 
-function calculatePrice() {
-    var weight = document.getElementById("weight").value;
-    var type = document.getElementById("shippingType").value;
-    var result = document.getElementById("priceResult");
+const baseId = "appmtpGvmklreNAqF";
+const tableName = "Table 1";
+const apiToken = "patt8AZo88X0D7ERo";
 
-    if(weight === "") {
-        result.innerHTML = "Please enter weight.";
-        return;
-    }
+const url = `https://api.airtable.com/v0/${baseId}/${tableName}?filterByFormula={Name}='${trackingNumber}'`;
 
-    var price = weight * 5;
+try{
 
-    if(type === "express") {
-        price = weight * 8;
-    }
+const response = await fetch(url,{
+headers:{
+Authorization: `Bearer ${apiToken}`
+}
+});
 
-    result.innerHTML = "Estimated Shipping Cost: $" + price;
+const data = await response.json();
+
+if(data.records.length > 0){
+
+const record = data.records[0].fields;
+
+result.innerHTML =
+"Sendungsnummer: " + trackingNumber +
+"<br>Status: Paket ist unterwegs" +
+"<br>Geschätzte Lieferung: 3-5 Werktage";
+
+}else{
+
+result.innerHTML = "Sendungsnummer nicht gefunden.";
+
+}
+
+}catch(error){
+
+result.innerHTML = "Fehler beim Abrufen der Sendungsinformationen.";
+
+}
+
 }
 </script>
-
 </body>
 </html>
