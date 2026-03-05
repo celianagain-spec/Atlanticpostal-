@@ -1,171 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AtlanticPostal - Worldwide Shipping</title>
+<title>Atlantic Postal Tracking</title>
 <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #f4f6f9;
+body{
+font-family:Arial;
+background:#f5f5f5;
+text-align:center;
+padding:40px;
 }
-header {
-    background: #003366;
-    color: white;
-    padding: 20px;
-    text-align: center;
+
+.container{
+background:white;
+padding:20px;
+border-radius:10px;
+max-width:400px;
+margin:auto;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
-nav {
-    background: #001f3f;
-    padding: 10px;
-    text-align: center;
+
+input{
+padding:10px;
+width:80%;
+margin-top:10px;
 }
-nav a {
-    color: white;
-    margin: 0 15px;
-    text-decoration: none;
+
+button{
+padding:10px 20px;
+margin-top:10px;
+background:#007BFF;
+color:white;
+border:none;
+border-radius:5px;
 }
-section {
-    padding: 40px;
-}
-.btn {
-    background: #003366;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-}
-.card {
-    background: white;
-    padding: 20px;
-    margin: 15px 0;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-footer {
-    background: #003366;
-    color: white;
-    text-align: center;
-    padding: 20px;
-}
-input, select {
-    padding: 8px;
-    margin: 5px 0;
-    width: 100%;
+
+.result{
+margin-top:20px;
 }
 </style>
 </head>
+
 <body>
 
-<header>
-<h1>AtlanticPostal</h1>
-<p>Reliable Worldwide Shipping Solutions</p>
-</header>
+<div class="container">
+<h2>Atlantic Postal Tracking</h2>
 
-<nav>
-<a href="#services">Services</a>
-<a href="#tracking">Track Package</a>
-<a href="#calculator">Price Calculator</a>
-<a href="#reviews">Reviews</a>
-<a href="#contact">Contact</a>
-</nav>
+<input type="text" id="trackingInput" placeholder="Enter Tracking Number">
 
-<section id="services">
-<h2>Our Services</h2>
-<div class="card">🌍 International Shipping</div>
-<div class="card">🚚 Express Delivery (24-72 hours)</div>
-<div class="card">📦 Secure Package Handling</div>
-<div class="card">🐾 Pet Transportation</div>
-</section>
+<br>
 
-<section id="tracking">
-<h2>Track Your Package</h2>
-<input type="text" id="trackingNumber" placeholder="Enter Tracking Number">
-<button class="btn" onclick="trackPackage()">Track</button>
-<p id="trackingResult"></p>
-</section>
+<button onclick="track()">Track</button>
 
-<section id="calculator">
-<h2>Shipping Price Calculator</h2>
-<label>Weight (kg)</label>
-<input type="number" id="weight">
-
-<label>Shipping Type</label>
-<select id="shippingType">
-<option value="standard">Standard</option>
-<option value="express">Express</option>
-</select>
-
-<button class="btn" onclick="calculatePrice()">Calculate</button>
-<p id="priceResult"></p>
-</section>
-
-<section id="reviews">
-<h2>Customer Reviews</h2>
-<div class="card">⭐⭐⭐⭐⭐ - "Fast and reliable delivery worldwide!"</div>
-<div class="card">⭐⭐⭐⭐⭐ - "Excellent customer service and safe shipping."</div>
-<div class="card">⭐⭐⭐⭐ - "My package arrived on time and in perfect condition."</div>
-</section>
-
-<section id="contact">
-<h2>Contact Us</h2>
-<p>Email: support@atlanticpostal.com</p>
-</section>
-
-<footer>
-<p>© 2026 AtlanticPostal. All rights reserved.</p>
-</footer>
+<div class="result" id="result"></div>
+</div>
 
 <script>
-async function trackPackage() {
 
-const trackingNumber = document.getElementById("trackingNumber").value;
-const result = document.getElementById("trackingResult");
+const API_TOKEN = "patQctgSatHFJp8GG";
+const BASE_ID = "appmtpGvmklreNAqF";
+const TABLE_NAME = "Tracking";
 
-if(trackingNumber === ""){
-result.innerHTML = "Bitte geben Sie eine Sendungsnummer ein.";
-return;
-}
+async function track(){
 
-const baseId = "appmtpGvmklreNAqF";
-const tableName = "Table 1";
-const apiToken = "patt8AZo88X0D7ERo";
+let trackingNumber = document.getElementById("trackingInput").value;
 
-const url = `https://api.airtable.com/v0/${baseId}/${tableName}?filterByFormula={Name}='${trackingNumber}'`;
+let url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula={TrackingNumber}="${trackingNumber}"`;
 
-try{
-
-const response = await fetch(url,{
+let response = await fetch(url,{
 headers:{
-Authorization: `Bearer ${apiToken}`
+Authorization:`Bearer ${API_TOKEN}`
 }
 });
 
-const data = await response.json();
+let data = await response.json();
 
 if(data.records.length > 0){
 
-const record = data.records[0].fields;
+let record = data.records[0].fields;
 
-result.innerHTML =
-"Sendungsnummer: " + trackingNumber +
-"<br>Status: Paket ist unterwegs" +
-"<br>Geschätzte Lieferung: 3-5 Werktage";
+document.getElementById("result").innerHTML =
+`
+<p><b>Status:</b> ${record.Status}</p>
+<p><b>Location:</b> ${record.Location}</p>
+<p><b>Delivery:</b> ${record.Delivery}</p>
+`;
 
 }else{
 
-result.innerHTML = "Sendungsnummer nicht gefunden.";
-
-}
-
-}catch(error){
-
-result.innerHTML = "Fehler beim Abrufen der Sendungsinformationen.";
+document.getElementById("result").innerHTML = "Tracking number not found";
 
 }
 
 }
+
 </script>
+
 </body>
 </html>
