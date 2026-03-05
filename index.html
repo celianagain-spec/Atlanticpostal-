@@ -2,63 +2,79 @@
 <html>
 <head>
 <title>Atlantic Postal Tracking</title>
+
 <style>
 body{
-font-family:Arial;
-background:#f5f5f5;
+font-family: Arial;
+background:#f4f6f8;
 text-align:center;
-padding:40px;
+}
+
+.header{
+background:#003366;
+color:white;
+padding:20px;
+font-size:24px;
 }
 
 .container{
-background:white;
-padding:20px;
-border-radius:10px;
-max-width:400px;
-margin:auto;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
+margin-top:40px;
 }
 
 input{
-padding:10px;
-width:80%;
-margin-top:10px;
+padding:12px;
+width:260px;
+border:1px solid #ccc;
+border-radius:5px;
 }
 
 button{
-padding:10px 20px;
-margin-top:10px;
+padding:12px 20px;
 background:#007BFF;
 color:white;
 border:none;
 border-radius:5px;
+cursor:pointer;
 }
 
-.result{
-margin-top:20px;
+.card{
+margin:30px auto;
+width:320px;
+background:white;
+padding:20px;
+border-radius:8px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+text-align:left;
+}
+
+.title{
+font-weight:bold;
+margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="header">
+Atlantic Postal Shipment Tracking
+</div>
+
 <div class="container">
-<h2>Atlantic Postal Tracking</h2>
 
 <input type="text" id="trackingInput" placeholder="Enter Tracking Number">
+<br><br>
+<button onclick="track()">Track Package</button>
 
-<br>
+<div id="result"></div>
 
-<button onclick="track()">Track</button>
-
-<div class="result" id="result"></div>
 </div>
 
 <script>
 
-const API_TOKEN = "patQctgSatHFJp8GG";
-const BASE_ID = "appmtpGvmklreNAqF";
-const TABLE_NAME = "Tracking";
+const API_TOKEN = "patt8AZo88X0D7ERo";
+const BASE_ID = "appd7hoLVjK4UkKsm";
+const TABLE_NAME = "Table 1";
 
 async function track(){
 
@@ -76,18 +92,42 @@ let data = await response.json();
 
 if(data.records.length > 0){
 
-let record = data.records[0].fields;
+let r = data.records[0].fields;
 
-document.getElementById("result").innerHTML =
-`
-<p><b>Status:</b> ${record.Status}</p>
-<p><b>Location:</b> ${record.Location}</p>
-<p><b>Delivery:</b> ${record.Delivery}</p>
+document.getElementById("result").innerHTML = `
+
+<div class="card">
+
+<div class="title">Tracking Number</div>
+${r.TrackingNumber}
+
+<br><br>
+
+<div class="title">Status</div>
+${r["Shipping Status"]}
+
+<br><br>
+
+<div class="title">Current Location</div>
+${r["Current Location"]}
+
+<br><br>
+
+<div class="title">Estimated Delivery</div>
+${r["Estimated Delivery Date"]}
+
+<br><br>
+
+<div class="title">Receiver</div>
+${r["Receiver Name"]}
+
+</div>
+
 `;
 
 }else{
 
-document.getElementById("result").innerHTML = "Tracking number not found";
+document.getElementById("result").innerHTML="Tracking number not found";
 
 }
 
