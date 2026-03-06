@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Atlantic Postal Tracking</title>
 
 <style>
+
 body{
 font-family:Arial;
-background:#f4f6f8;
+background:#f2f2f2;
+margin:0;
+padding:0;
 text-align:center;
 }
 
 .header{
-background:#003366;
+background:#0a3d62;
 color:white;
 padding:20px;
-font-size:24px;
+font-size:22px;
+font-weight:bold;
 }
 
 .container{
@@ -22,27 +27,35 @@ margin-top:40px;
 }
 
 input{
-padding:12px;
 width:260px;
+padding:12px;
+font-size:16px;
 border:1px solid #ccc;
-border-radius:5px;
+border-radius:6px;
 }
 
 button{
 padding:12px 20px;
-background:#007BFF;
+background:#0a3d62;
 color:white;
 border:none;
-border-radius:5px;
+border-radius:6px;
+font-size:16px;
+margin-left:10px;
 cursor:pointer;
 }
 
+button:hover{
+background:#074a8b;
+}
+
 .card{
-margin:30px auto;
-width:320px;
 background:white;
+width:90%;
+max-width:420px;
+margin:30px auto;
 padding:20px;
-border-radius:8px;
+border-radius:10px;
 box-shadow:0 0 10px rgba(0,0,0,0.1);
 text-align:left;
 }
@@ -50,21 +63,31 @@ text-align:left;
 .title{
 font-weight:bold;
 margin-top:10px;
+color:#333;
 }
+
+.value{
+margin-bottom:10px;
+}
+
+.error{
+color:red;
+margin-top:20px;
+font-weight:bold;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="header">
-Atlantic Postal Shipment Tracking
+Atlantic Postal Tracking
 </div>
 
 <div class="container">
 
 <input type="text" id="trackingInput" value="AP123456">
-
-<br><br>
 
 <button onclick="track()">Track Package</button>
 
@@ -82,7 +105,7 @@ async function track(){
 
 let trackingNumber = document.getElementById("trackingInput").value
 
-let url = `https://api.airtable.com/v0/${BASE_ID}/Table%201?filterByFormula=TrackingNumber="${trackingNumber}"`
+let url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula={Tracking Number}='${trackingNumber}'`
 
 let response = await fetch(url,{
 headers:{
@@ -92,7 +115,7 @@ Authorization:`Bearer ${API_TOKEN}`
 
 let data = await response.json()
 
-if(data.records && data.records.length > 0){
+if(data.records.length > 0){
 
 let r = data.records[0].fields
 
@@ -101,25 +124,25 @@ document.getElementById("result").innerHTML = `
 <div class="card">
 
 <div class="title">Tracking Number</div>
-${r.TrackingNumber}
+<div class="value">${r["Tracking Number"]}</div>
 
 <div class="title">Receiver</div>
-${r["Receiver Name"]}
+<div class="value">${r["Receiver Name"]}</div>
 
 <div class="title">Origin</div>
-${r["Origin Country"]}
+<div class="value">${r["Origin Country"]}</div>
 
 <div class="title">Destination</div>
-${r["Destination Country"]}
+<div class="value">${r["Destination Country"]}</div>
 
 <div class="title">Shipping Status</div>
-${r["Shipping Status"]}
+<div class="value">${r["Shipping Status"]}</div>
 
 <div class="title">Shipping Date</div>
-${r["Shipping date"]}
+<div class="value">${r["Shipping date"]}</div>
 
 <div class="title">Estimated Delivery</div>
-${r["Estimated Delivery Date"]}
+<div class="value">${r["Estimated Delivery Date"]}</div>
 
 </div>
 
@@ -127,7 +150,7 @@ ${r["Estimated Delivery Date"]}
 
 }else{
 
-document.getElementById("result").innerHTML="AP123456"
+document.getElementById("result").innerHTML = "<div class='error'>Tracking number not found</div>"
 
 }
 
