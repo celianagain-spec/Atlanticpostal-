@@ -71,7 +71,9 @@ function track(){
 
 let number = document.getElementById("track").value;
 
-fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}`,{
+let url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula={Tracking Number}='${number}'`;
+
+fetch(url,{
 headers:{
 Authorization:`Bearer ${API_TOKEN}`
 }
@@ -81,30 +83,24 @@ Authorization:`Bearer ${API_TOKEN}`
 
 .then(data=>{
 
-let found=false;
+if(data.records.length > 0){
 
-data.records.forEach(record=>{
-
-if(record.fields["Tracking Number"] === number){
-
-found=true;
+let record = data.records[0].fields;
 
 document.getElementById("result").innerHTML=
 
-"<b>Status:</b> "+record.fields["Shipping Status"]+
-"<br><b>Location:</b> "+record.fields["Current Location"];
+"<b>Status:</b> "+record["Shipping Status"]+
+"<br><b>Location:</b> "+record["Current Location"]+
+"<br><b>Receiver:</b> "+record["Receiver Name"]+
+"<br><b>Destination:</b> "+record["Destination Country"];
 
-}
-
-});
-
-if(!found){
+}else{
 
 document.getElementById("result").innerHTML="Tracking number not found";
 
 }
 
-})
+});
 
 }
 
