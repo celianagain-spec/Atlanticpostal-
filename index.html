@@ -6,41 +6,40 @@
 <style>
 body{
 font-family:Arial;
-background:#f4f6f8;
+background:#f4f6f9;
 text-align:center;
 padding:40px;
 }
 
-.container{
+.box{
 background:white;
 padding:30px;
-border-radius:10px;
 max-width:500px;
 margin:auto;
+border-radius:10px;
 box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
 input{
+padding:12px;
 width:80%;
-padding:10px;
-margin-top:10px;
 border:1px solid #ccc;
-border-radius:5px;
+border-radius:6px;
 }
 
 button{
-padding:10px 20px;
+padding:12px 20px;
 margin-top:10px;
-background:#0a58ca;
+background:#0b5ed7;
 color:white;
 border:none;
-border-radius:5px;
+border-radius:6px;
 cursor:pointer;
 }
 
-.result{
+#result{
 margin-top:20px;
-text-align:left;
+font-size:18px;
 }
 </style>
 
@@ -48,11 +47,11 @@ text-align:left;
 
 <body>
 
-<div class="container">
+<div class="box">
 
 <h2>Atlantic Postal Tracking</h2>
 
-<input id="trackingInput" placeholder="Enter Tracking Number">
+<input id="track" placeholder="Enter tracking number">
 
 <br><br>
 
@@ -64,52 +63,48 @@ text-align:left;
 
 <script>
 
-const BASE_ID = "appd7hoLVjK4UkKsm"
-const TABLE_NAME = "Table%201"
-const API_TOKEN = "patHtcGZMxPeArKGm"
+const API_TOKEN = "patHtcGZMxPeArKGm";
+const BASE_ID = "appd7hoLVjK4UkKsm";
+const TABLE_NAME = "Table 1";
 
-async function track(){
+function track(){
 
-let trackingNumber =
-document.getElementById("trackingInput").value;
+let number = document.getElementById("track").value;
 
-let url =
-`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula={Tracking Number}='${trackingNumber}'`;
-
-let response = await fetch(url,{
+fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}`,{
 headers:{
 Authorization:`Bearer ${API_TOKEN}`
 }
-});
+})
 
-let data = await response.json();
+.then(res=>res.json())
 
-let result = document.getElementById("result");
+.then(data=>{
 
-if(!data.records || data.records.length==0){
+let found=false;
 
-result.innerHTML = "<h3>Tracking number not found</h3>";
-return;
+data.records.forEach(record=>{
+
+if(record.fields["Tracking Number"] === number){
+
+found=true;
+
+document.getElementById("result").innerHTML=
+
+"<b>Status:</b> "+record.fields["Shipping Status"]+
+"<br><b>Location:</b> "+record.fields["Current Location"];
 
 }
 
-let r = data.records[0].fields;
+});
 
-result.innerHTML = `
+if(!found){
 
-<h3>Status: ${r["Shipping Status"]}</h3>
+document.getElementById("result").innerHTML="Tracking number not found";
 
-<p><b>Receiver:</b> ${r["Receiver Name"]}</p>
+}
 
-<p><b>Origin:</b> ${r["Origin Country"]}</p>
-
-<p><b>Destination:</b> ${r["Destination Country"]}</p>
-
-<p><b>Shipping Date:</b> ${r["Shipping date"]}</p>
-
-<p><b>Estimated Delivery:</b> ${r["Estimated Delivery Date"]}</p>
-
-`;
+})
 
 }
 
