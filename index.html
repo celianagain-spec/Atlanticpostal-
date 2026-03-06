@@ -5,20 +5,18 @@
 <title>Atlantic Postal Tracking</title>
 
 <style>
-
 body{
 font-family:Arial;
-background:#f2f2f2;
+background:#e9e9e9;
 margin:0;
-padding:0;
 text-align:center;
 }
 
 .header{
-background:#0a3d62;
+background:#0c4a73;
 color:white;
 padding:20px;
-font-size:22px;
+font-size:24px;
 font-weight:bold;
 }
 
@@ -30,52 +28,31 @@ input{
 width:260px;
 padding:12px;
 font-size:16px;
-border:1px solid #ccc;
 border-radius:6px;
+border:1px solid #ccc;
 }
 
 button{
 padding:12px 20px;
-background:#0a3d62;
+background:#0c4a73;
 color:white;
 border:none;
 border-radius:6px;
 font-size:16px;
-margin-left:10px;
+margin-top:10px;
 cursor:pointer;
-}
-
-button:hover{
-background:#074a8b;
 }
 
 .card{
 background:white;
 width:90%;
-max-width:420px;
+max-width:400px;
 margin:30px auto;
 padding:20px;
-border-radius:10px;
+border-radius:8px;
 box-shadow:0 0 10px rgba(0,0,0,0.1);
 text-align:left;
 }
-
-.title{
-font-weight:bold;
-margin-top:10px;
-color:#333;
-}
-
-.value{
-margin-bottom:10px;
-}
-
-.error{
-color:red;
-margin-top:20px;
-font-weight:bold;
-}
-
 </style>
 </head>
 
@@ -89,6 +66,8 @@ Atlantic Postal Tracking
 
 <input type="text" id="trackingInput" value="AP123456">
 
+<br><br>
+
 <button onclick="track()">Track Package</button>
 
 <div id="result"></div>
@@ -99,13 +78,12 @@ Atlantic Postal Tracking
 
 const API_TOKEN = "patHtcGZMxPeArKGm"
 const BASE_ID = "appd7hoLVjK4UkKsm"
-const TABLE_NAME = "Table 1"
 
 async function track(){
 
 let trackingNumber = document.getElementById("trackingInput").value
 
-let url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula={Tracking Number}='${trackingNumber}'`
+let url = `https://api.airtable.com/v0/${BASE_ID}/Table%201?filterByFormula={Tracking Number}='${trackingNumber}'`
 
 let response = await fetch(url,{
 headers:{
@@ -123,26 +101,14 @@ document.getElementById("result").innerHTML = `
 
 <div class="card">
 
-<div class="title">Tracking Number</div>
-<div class="value">${r["Tracking Number"]}</div>
+<b>Tracking Number</b><br>
+${r["Tracking Number"]}<br><br>
 
-<div class="title">Receiver</div>
-<div class="value">${r["Receiver Name"]}</div>
+<b>Package</b><br>
+${r["Name"]}<br><br>
 
-<div class="title">Origin</div>
-<div class="value">${r["Origin Country"]}</div>
-
-<div class="title">Destination</div>
-<div class="value">${r["Destination Country"]}</div>
-
-<div class="title">Shipping Status</div>
-<div class="value">${r["Shipping Status"]}</div>
-
-<div class="title">Shipping Date</div>
-<div class="value">${r["Shipping date"]}</div>
-
-<div class="title">Estimated Delivery</div>
-<div class="value">${r["Estimated Delivery Date"]}</div>
+<b>Receiver</b><br>
+${r["Receiver Name"]}
 
 </div>
 
@@ -150,13 +116,12 @@ document.getElementById("result").innerHTML = `
 
 }else{
 
-document.getElementById("result").innerHTML = "<div class='error'>Tracking number not found</div>"
+document.getElementById("result").innerHTML =
+"<p style='color:red'>Tracking number not found</p>"
 
 }
 
 }
-
-track()
 
 </script>
 
