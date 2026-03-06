@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Atlantic Postal Tracking</title>
+
 <style>
 body{
 font-family:Arial;
@@ -42,6 +43,7 @@ margin-top:20px;
 text-align:left;
 }
 </style>
+
 </head>
 
 <body>
@@ -52,19 +54,19 @@ text-align:left;
 
 <input id="trackingInput" placeholder="Enter Tracking Number">
 
-<br>
+<br><br>
 
 <button onclick="track()">Track Package</button>
 
-<div class="result" id="result"></div>
+<div id="result"></div>
 
 </div>
 
 <script>
 
-const BASE_ID = "appd7hoLVjK4UkKsm";
-const TABLE_NAME = "Table 1";
-const API_TOKEN = "patHtcGZMxPeArKGm";
+const BASE_ID = "appd7hoLVjK4UkKsm"
+const TABLE_NAME = "Table%201"
+const API_TOKEN = "patHtcGZMxPeArKGm"
 
 async function track(){
 
@@ -72,7 +74,7 @@ let trackingNumber =
 document.getElementById("trackingInput").value;
 
 let url =
-`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula={Tracking Number}="${trackingNumber}"`;
+`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula={Tracking Number}='${trackingNumber}'`;
 
 let response = await fetch(url,{
 headers:{
@@ -82,34 +84,26 @@ Authorization:`Bearer ${API_TOKEN}`
 
 let data = await response.json();
 
-let resultDiv = document.getElementById("result");
+let result = document.getElementById("result");
 
-if(data.records.length === 0){
+if(!data.records || data.records.length==0){
 
-resultDiv.innerHTML = "<b>Tracking number not found</b>";
-
+result.innerHTML = "<h3>Tracking number not found</h3>";
 return;
+
 }
 
 let r = data.records[0].fields;
 
-resultDiv.innerHTML = `
+result.innerHTML = `
 
 <h3>Status: ${r["Shipping Status"]}</h3>
 
 <p><b>Receiver:</b> ${r["Receiver Name"]}</p>
 
-<p><b>Sender:</b> ${r["Sender Name"]}</p>
-
 <p><b>Origin:</b> ${r["Origin Country"]}</p>
 
 <p><b>Destination:</b> ${r["Destination Country"]}</p>
-
-<p><b>Shipment Type:</b> ${r["Shipment Type (air,sea,express)"]}</p>
-
-<p><b>Weight:</b> ${r["Package weight (kg)"]} kg</p>
-
-<p><b>Shipping Company:</b> ${r["Shipping Company"]}</p>
 
 <p><b>Shipping Date:</b> ${r["Shipping date"]}</p>
 
