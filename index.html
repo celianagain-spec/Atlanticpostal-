@@ -5,7 +5,7 @@
 
 <style>
 body{
-font-family: Arial;
+font-family:Arial;
 background:#f4f6f8;
 text-align:center;
 }
@@ -49,7 +49,7 @@ text-align:left;
 
 .title{
 font-weight:bold;
-margin-bottom:10px;
+margin-top:10px;
 }
 </style>
 </head>
@@ -62,8 +62,10 @@ Atlantic Postal Shipment Tracking
 
 <div class="container">
 
-<input type="text" id="trackingInput" placeholder="Enter Tracking Number">
+<input type="text" id="trackingInput" value="AP123456">
+
 <br><br>
+
 <button onclick="track()">Track Package</button>
 
 <div id="result"></div>
@@ -72,27 +74,27 @@ Atlantic Postal Shipment Tracking
 
 <script>
 
-const API_TOKEN = "patt8AZo88X0D7ERo";
-const BASE_ID = "appd7hoLVjK4UkKsm";
-const TABLE_NAME = "Tracking";
+const API_TOKEN = "patHtcGZMxPeArKGm"
+const BASE_ID = "appd7hoLVjK4UkKsm"
+const TABLE_NAME = "Table 1"
 
 async function track(){
 
-let trackingNumber = document.getElementById("trackingInput").value;
+let trackingNumber = document.getElementById("trackingInput").value
 
-let url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula={TrackingNumber}="${trackingNumber}"`;
+let url = `https://api.airtable.com/v0/${BASE_ID}/Table%201?filterByFormula=TrackingNumber="${trackingNumber}"`
 
 let response = await fetch(url,{
 headers:{
 Authorization:`Bearer ${API_TOKEN}`
 }
-});
+})
 
-let data = await response.json();
+let data = await response.json()
 
-if(data.records.length > 0){
+if(data.records && data.records.length > 0){
 
-let r = data.records[0].fields;
+let r = data.records[0].fields
 
 document.getElementById("result").innerHTML = `
 
@@ -101,37 +103,37 @@ document.getElementById("result").innerHTML = `
 <div class="title">Tracking Number</div>
 ${r.TrackingNumber}
 
-<br><br>
+<div class="title">Receiver</div>
+${r["Receiver Name"]}
 
-<div class="title">Status</div>
+<div class="title">Origin</div>
+${r["Origin Country"]}
+
+<div class="title">Destination</div>
+${r["Destination Country"]}
+
+<div class="title">Shipping Status</div>
 ${r["Shipping Status"]}
 
-<br><br>
-
-<div class="title">Current Location</div>
-${r["Current Location"]}
-
-<br><br>
+<div class="title">Shipping Date</div>
+${r["Shipping date"]}
 
 <div class="title">Estimated Delivery</div>
 ${r["Estimated Delivery Date"]}
 
-<br><br>
-
-<div class="title">Receiver</div>
-${r["Receiver Name"]}
-
 </div>
 
-`;
+`
 
 }else{
 
-document.getElementById("result").innerHTML="Tracking number not found";
+document.getElementById("result").innerHTML="Tracking number not found"
 
 }
 
 }
+
+track()
 
 </script>
 
