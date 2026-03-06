@@ -1,56 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Atlantic Postal Tracking</title>
-
 <style>
 body{
 font-family:Arial;
-background:#e9e9e9;
-margin:0;
+background:#f4f6f8;
 text-align:center;
-}
-
-.header{
-background:#0c4a73;
-color:white;
-padding:20px;
-font-size:24px;
-font-weight:bold;
+padding:40px;
 }
 
 .container{
-margin-top:40px;
+background:white;
+padding:30px;
+border-radius:10px;
+max-width:500px;
+margin:auto;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
 input{
-width:260px;
-padding:12px;
-font-size:16px;
-border-radius:6px;
+width:80%;
+padding:10px;
+margin-top:10px;
 border:1px solid #ccc;
+border-radius:5px;
 }
 
 button{
-padding:12px 20px;
-background:#0c4a73;
+padding:10px 20px;
+margin-top:10px;
+background:#0a58ca;
 color:white;
 border:none;
-border-radius:6px;
-font-size:16px;
-margin-top:10px;
+border-radius:5px;
 cursor:pointer;
 }
 
-.card{
-background:white;
-width:90%;
-max-width:400px;
-margin:30px auto;
-padding:20px;
-border-radius:8px;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
+.result{
+margin-top:20px;
 text-align:left;
 }
 </style>
@@ -58,68 +46,76 @@ text-align:left;
 
 <body>
 
-<div class="header">
-Atlantic Postal Tracking
-</div>
-
 <div class="container">
 
-<input type="text" id="trackingInput" value="AP123456">
+<h2>Atlantic Postal Tracking</h2>
 
-<br><br>
+<input id="trackingInput" placeholder="Enter Tracking Number">
+
+<br>
 
 <button onclick="track()">Track Package</button>
 
-<div id="result"></div>
+<div class="result" id="result"></div>
 
 </div>
 
 <script>
 
-const API_TOKEN = "patHtcGZMxPeArKGm"
-const BASE_ID = "appd7hoLVjK4UkKsm"
+const BASE_ID = "appd7hoLVjK4UkKsm";
+const TABLE_NAME = "Table 1";
+const API_TOKEN = "patHtcGZMxPeArKGm";
 
 async function track(){
 
-let trackingNumber = document.getElementById("trackingInput").value
+let trackingNumber =
+document.getElementById("trackingInput").value;
 
-let url = `https://api.airtable.com/v0/${BASE_ID}/Table%201?filterByFormula={Tracking Number}='${trackingNumber}'`
+let url =
+`https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula={Tracking Number}="${trackingNumber}"`;
 
 let response = await fetch(url,{
 headers:{
 Authorization:`Bearer ${API_TOKEN}`
 }
-})
+});
 
-let data = await response.json()
+let data = await response.json();
 
-if(data.records.length > 0){
+let resultDiv = document.getElementById("result");
 
-let r = data.records[0].fields
+if(data.records.length === 0){
 
-document.getElementById("result").innerHTML = `
+resultDiv.innerHTML = "<b>Tracking number not found</b>";
 
-<div class="card">
-
-<b>Tracking Number</b><br>
-${r["Tracking Number"]}<br><br>
-
-<b>Package</b><br>
-${r["Name"]}<br><br>
-
-<b>Receiver</b><br>
-${r["Receiver Name"]}
-
-</div>
-
-`
-
-}else{
-
-document.getElementById("result").innerHTML =
-"<p style='color:red'>Tracking number not found</p>"
-
+return;
 }
+
+let r = data.records[0].fields;
+
+resultDiv.innerHTML = `
+
+<h3>Status: ${r["Shipping Status"]}</h3>
+
+<p><b>Receiver:</b> ${r["Receiver Name"]}</p>
+
+<p><b>Sender:</b> ${r["Sender Name"]}</p>
+
+<p><b>Origin:</b> ${r["Origin Country"]}</p>
+
+<p><b>Destination:</b> ${r["Destination Country"]}</p>
+
+<p><b>Shipment Type:</b> ${r["Shipment Type (air,sea,express)"]}</p>
+
+<p><b>Weight:</b> ${r["Package weight (kg)"]} kg</p>
+
+<p><b>Shipping Company:</b> ${r["Shipping Company"]}</p>
+
+<p><b>Shipping Date:</b> ${r["Shipping date"]}</p>
+
+<p><b>Estimated Delivery:</b> ${r["Estimated Delivery Date"]}</p>
+
+`;
 
 }
 
