@@ -1,39 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Atlantic Postal Tracking</title>
+<title>Track Shipment</title>
 
 <style>
 body{
-font-family:Arial;
-background:#f4f6f9;
+font-family: Arial;
 text-align:center;
-padding:40px;
-}
-
-.box{
-background:white;
-padding:30px;
-max-width:500px;
-margin:auto;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
+margin-top:100px;
 }
 
 input{
-padding:12px;
-width:80%;
-border:1px solid #ccc;
-border-radius:6px;
+padding:10px;
+width:250px;
 }
 
 button{
-padding:12px 20px;
-margin-top:10px;
-background:#0b5ed7;
-color:white;
-border:none;
-border-radius:6px;
+padding:10px 20px;
 cursor:pointer;
 }
 
@@ -47,60 +30,48 @@ font-size:18px;
 
 <body>
 
-<div class="box">
+<h2>Track Your Shipment</h2>
 
-<h2>Atlantic Postal Tracking</h2>
-
-<input id="track" placeholder="Enter tracking number">
-
-<br><br>
-
-<button onclick="track()">Track Package</button>
+<input type="text" id="trackingInput" placeholder="Enter Tracking Number">
+<button onclick="trackShipment()">Track</button>
 
 <div id="result"></div>
 
-</div>
-
 <script>
 
-const API_TOKEN = "patHtcGZMxPeArKGm";
-const BASE_ID = "appd7hoLVjK4UkKsm";
-const TABLE_NAME = "Table 1";
+async function trackShipment(){
 
-function track(){
+let trackingNumber = document.getElementById("trackingInput").value;
 
-let number = document.getElementById("track").value;
+let token = "patOreWQsQ8Zb4yuQ";
+let baseId = "apphbOga6LGmfFlbT";
+let table = "shipment";
 
-let url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?filterByFormula={Tracking Number}='${number}'`;
+let url = `https://api.airtable.com/v0/${baseId}/${table}?filterByFormula={Tracking Number}='${trackingNumber}'`;
 
-fetch(url,{
+let response = await fetch(url,{
 headers:{
-Authorization:`Bearer ${API_TOKEN}`
+Authorization: `Bearer ${token}`
 }
-})
+});
 
-.then(res=>res.json())
-
-.then(data=>{
+let data = await response.json();
 
 if(data.records.length > 0){
 
 let record = data.records[0].fields;
 
-document.getElementById("result").innerHTML=
-
-"<b>Status:</b> "+record["Shipping Status"]+
-"<br><b>Location:</b> "+record["Current Location"]+
-"<br><b>Receiver:</b> "+record["Receiver Name"]+
-"<br><b>Destination:</b> "+record["Destination Country"];
+document.getElementById("result").innerHTML = `
+Tracking Number: ${record["Tracking Number"]}<br>
+Current Location: ${record["Current Location"]}<br>
+Status: ${record["Shipment Status"]}
+`;
 
 }else{
 
-document.getElementById("result").innerHTML="Tracking number not found";
+document.getElementById("result").innerHTML = "Tracking number not found";
 
 }
-
-});
 
 }
 
